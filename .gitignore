@@ -18,6 +18,10 @@ config.status
 stamp-h1
 clean
 src/doom1.wad
+*.wad
+*.deh
+src/MUSIC/
 .githelp
 .direnv/
 /.ccls-cache/
+.DS_Store

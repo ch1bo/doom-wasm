@@ -37,6 +37,8 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+#include <emscripten.h>
+
 // when to clip out sounds
 // Does not fit the large outdoor areas.
 
@@ -60,6 +62,14 @@
 
 #define NORM_PRIORITY 64
 #define NORM_SEP 128
+
+EM_JS(void, WEBAUDIO_playSong, (int id), {
+    audioManager.playSong(id);
+});
+
+EM_JS(void, WEBAUDIO_setMusicVolume, (int volume), {
+    audioManager.setMusicVolume(volume);
+});
 
 typedef struct
 {
@@ -630,6 +640,8 @@ void S_SetMusicVolume(int volume)
     }
 
     I_SetMusicVolume(volume);
+
+    WEBAUDIO_setMusicVolume(volume);
 }
 
 void S_SetSfxVolume(int volume)
@@ -696,6 +708,8 @@ void S_ChangeMusic(int musicnum, int looping)
     handle = I_RegisterSong(music->data, W_LumpLength(music->lumpnum));
     music->handle = handle;
     I_PlaySong(handle, looping);
+
+    WEBAUDIO_playSong(musicnum);
 
     mus_playing = music;
 }

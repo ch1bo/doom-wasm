@@ -54,6 +54,50 @@
             <canvas class="frame" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
         </div>
         <script>
+
+            class AudioManager {
+                constructor() {
+                    this.audio = new Audio();
+                    this.musicDir = "/MUSIC";
+                    this.musicFiles = {
+                        1: "d_e1m1.ogg",
+                        2: "d_e1m2.ogg",
+                        3: "d_e1m3.ogg",
+                        4: "d_e1m4.ogg",
+                        5: "d_e1m5.ogg",
+                        6: "d_e1m6.ogg",
+                        7: "d_e1m7.ogg",
+                        8: "d_e1m8.ogg",
+                        9: "d_e1m9.ogg",
+                        28: "d_inter.ogg",
+                        29: "d_inter.ogg",
+                        31: "d_victor.ogg",
+                        32: "d_inter.ogg"
+                    }
+                }
+
+                playSong(id) {
+                    console.log("playing music id: " + id);
+                    this.audio.pause();
+                    try {
+                        if (typeof this.musicFiles[id] !== undefined) {   
+                            this.audio = new Audio(this.musicDir + "/" + this.musicFiles[id]);
+                            this.audio.loop = true;
+                            this.audio.play();
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+
+                setMusicVolume(volume) {
+                    const mappedVolume = (1 / 120) * volume;
+                    this.audio.volume = mappedVolume;
+                }
+            }
+
+            const audioManager = new AudioManager();
+
             var commonArgs = ["-iwad", "doom1.wad", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
 
             var Module = {
@@ -64,6 +108,20 @@
                 preRun: () => {
                     Module.FS.createPreloadedFile("", "doom1.wad", "doom1.wad", true, true);
                     Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
+
+                    // create virtual folder for music
+                    const musicFolder = Module.FS.mkdir(audioManager.musicDir);
+
+                    // preload all music files
+                    const loaded = []; // keep track of files so we don't preload twice
+                    for (const key in audioManager.musicFiles) {
+                        const path = audioManager.musicFiles[key];
+                        if (loaded.indexOf(path) === -1) {
+                            Module.FS.createPreloadedFile(musicFolder, path, audioManager.musicDir + "/" + path, true, true);
+                        }
+                        loaded.push(path);
+                    }
+
                 },
                 printErr: function (text) {
                     if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(" ");
