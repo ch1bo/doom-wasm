@@ -27,6 +27,7 @@ Then:
 
 ```
 curl https://distro.ibiblio.org/slitaz/sources/packages/d/doom1.wad -o src/doom1.wad
+curl https://sc55.duke4.net/ogg/doom_sc55_ogg.zip -o src/doom_sc55_ogg.zip && unzip src/doom_sc55_ogg.zip -d src && rm src/doom_sc55_ogg.zip
 simple-http-server -i src
 ```
 
