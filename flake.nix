@@ -11,6 +11,9 @@
         pkgs = import nixpkgs { inherit system; };
       in
       {
+        packages.doom-wasm = pkgs.callPackage ./doom-wasm.nix {
+
+        };
         devShells.default = pkgs.mkShell
           {
             # Workaround taken from
